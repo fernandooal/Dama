@@ -57,17 +57,19 @@ public class Tabuleiro {
 			@Override
 			public void paint(Graphics g) {
 				boolean claro = true;
-				for (int y = 0; y < 8; y++) {
-					for (int x = 0; x < 8; x++) {
-						if (claro) {
-							g.setColor(new Color(240, 217, 181));
-						} else {
-							g.setColor(new Color(181, 136, 99));
-						}
-						g.fillRect(x * 64, y * 64, 64, 64);
-						claro = !claro;
-					}
-					claro = !claro;
+		        for (int y = 0; y < 8; y++) {
+		            for (int x = 0; x < 8; x++) {
+		                if (claro) {
+		                    g.setColor(new Color(240, 217, 181));
+		                } else {
+		                    g.setColor(new Color(181, 136, 99));
+		                }
+		                int casaX = x * 64 - 32; // Coordenada X ajustada para centralizar
+		                int casaY = y * 64; // Coordenada Y ajustada para centralizar
+		                g.fillRect(casaX + 32, casaY, 64, 64);
+		                claro = !claro;
+		            }
+		            claro = !claro;
 				} // Colocando as pecas nas casas por coordenadas
 				for (Peca p : pecaLista) {
 					if (p.isVermelho() == true) {
@@ -114,45 +116,49 @@ public class Tabuleiro {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			    if (pecaSelecionada != null) {
+			        int tamanhoCasa = 64;
+			        int xPeca = (e.getX() - tamanhoCasa/2 + 32) / tamanhoCasa;
+			        int yPeca = (e.getY() - tamanhoCasa/2) / tamanhoCasa;
+
 			        if (pecaSelecionada.isDama()) {
-			        	pecaSelecionada.mexerDama(e.getX() / 64, e.getY() / 64);
+			            pecaSelecionada.mexerDama(xPeca, yPeca);
 			        } else {
-			        	pecaSelecionada.mexerPeca(e.getX() / 64, e.getY() / 64);
+			            pecaSelecionada.mexerPeca(xPeca, yPeca);
 			        }
-			        
-			        
+
 			        // Verificar se a peça chegou à última fileira e transformá-la em uma dama
 			        if(pecaSelecionada.isDama() == false && pecaSelecionada.isVermelho() && pecaSelecionada.getyPeca() == 7) {
-			        	pecaSelecionada.setDama(true);
+			            pecaSelecionada.setDama(true);
 			        } else if(pecaSelecionada.isDama() == false && pecaSelecionada.isVermelho() == false && pecaSelecionada.getyPeca() == 0) {
-			        	pecaSelecionada.setDama(true);
+			            pecaSelecionada.setDama(true);
 			        }
-			    }
 
-			    frame.repaint();
-			    
-			    if(pecaSelecionada.isVermelho() && frame.getTitle().equals("Turno de " + jogador1.getNome())) {
-			    	frame.setTitle("Turno de " + jogador2.getNome());
-			    } else {
-			    	frame.setTitle("Turno de " + jogador1.getNome());
-			    } 
-			    
-			    pecaSelecionada.setComeuPeca(false);
-			    
-			    checarVitoria(jogador1, jogador2);
-			    
+			        frame.repaint();
+
+			        if(pecaSelecionada.isVermelho() && frame.getTitle().equals("Turno de " + jogador1.getNome())) {
+			            frame.setTitle("Turno de " + jogador2.getNome());
+			        } else {
+			            frame.setTitle("Turno de " + jogador1.getNome());
+			        }
+
+			        pecaSelecionada.setComeuPeca(false);
+
+			        checarVitoria(jogador1, jogador2);
+			    }
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
+				int x = e.getX() - 16; // Ajuste da coordenada X
+			    int y = e.getY() - 32; // Ajuste da coordenada Y
 
-				pecaSelecionada = pegarPeca(e.getX(), e.getY());
-			
-				if(frame.getTitle().equals("Turno de " + jogador1.getNome()) && pecaSelecionada.isVermelho() == false) {
-					pecaSelecionada = null ;
-				} else if(frame.getTitle().equals("Turno de " + jogador2.getNome()) && pecaSelecionada.isVermelho()) {
-					pecaSelecionada = null;
-				}
+			    pecaSelecionada = pegarPeca(x, y);
+				
+			    if(frame.getTitle().equals("Turno de " + jogador1.getNome()) && pecaSelecionada != null && !pecaSelecionada.isVermelho()) {
+			        pecaSelecionada = null;
+			    } else if(frame.getTitle().equals("Turno de " + jogador2.getNome()) && pecaSelecionada != null && pecaSelecionada.isVermelho()) {
+			        pecaSelecionada = null;
+			    }
 			}
 
 			@Override
