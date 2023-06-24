@@ -13,16 +13,25 @@ public class Tabuleiro {
 	// atributos
 	public static LinkedList<Peca> pecaLista = new LinkedList<>();
 	public static Peca pecaSelecionada = null;
-	int pecasVermelhasRemovidas = 0;
-	int pecasPretasRemovidas = 0;
 
 	// metodo para começar o jogo
 	public static void comecarJogo(Jogador jogador1, Jogador jogador2) {
 
+		int pecasPretas = 12;
+		int pecasVermelhas = 12;
+
+		for (Peca p : pecaLista) {
+			if (p.isVermelho()) {
+				pecasVermelhas--;
+			} else {
+				pecasPretas--;
+			}
+		}
+
 		// setup do frame
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setTitle("Turno de " + jogador1.getNome());
+		frame.setTitle("Turno de " + jogador1.getNome() + " - 12 peças restantes");
 		frame.setSize(528, 550);
 
 		// criando as pecas e aplicando os atributos para cada uma
@@ -143,11 +152,23 @@ public class Tabuleiro {
 
 					frame.repaint();
 
+					int pecasPretas = 0;
+					int pecasVermelhas = 0;
+
+					for (Peca p : pecaLista) {
+						if (p.isVermelho()) {
+							pecasVermelhas++;
+						} else {
+							pecasPretas++;
+						}
+					}
+
 					// alterando o turno ao final de cada movimentação
-					if (pecaSelecionada.isVermelho() && frame.getTitle().equals("Turno de " + jogador1.getNome())) {
-						frame.setTitle("Turno de " + jogador2.getNome());
+					if (pecaSelecionada.isVermelho() && frame.getTitle()
+							.equals("Turno de " + jogador1.getNome() + " - " + pecasVermelhas + " peças restantes")) {
+						frame.setTitle("Turno de " + jogador2.getNome() + " - " + pecasPretas + " peças restantes");
 					} else {
-						frame.setTitle("Turno de " + jogador1.getNome());
+						frame.setTitle("Turno de " + jogador1.getNome() + " - " + pecasVermelhas + " peças restantes");
 					}
 
 					pecaSelecionada.setComeuPeca(false);
@@ -165,12 +186,25 @@ public class Tabuleiro {
 
 				pecaSelecionada = pegarPeca(x, y);
 
+				int pecasPretas = 0;
+				int pecasVermelhas = 0;
+
+				for (Peca p : pecaLista) {
+					if (p.isVermelho()) {
+						pecasVermelhas++;
+					} else {
+						pecasPretas++;
+					}
+				}
+
 				// proibindo pegar a peça do outro jogador durante seu turno
-				if (frame.getTitle().equals("Turno de " + jogador1.getNome()) && pecaSelecionada != null
-						&& !pecaSelecionada.isVermelho()) {
+				if (frame.getTitle()
+						.equals("Turno de " + jogador1.getNome() + " - " + pecasVermelhas + " peças restantes")
+						&& pecaSelecionada != null && !pecaSelecionada.isVermelho()) {
 					pecaSelecionada = null;
-				} else if (frame.getTitle().equals("Turno de " + jogador2.getNome()) && pecaSelecionada != null
-						&& pecaSelecionada.isVermelho()) {
+				} else if (frame.getTitle()
+						.equals("Turno de " + jogador2.getNome() + " - " + pecasPretas + " peças restantes")
+						&& pecaSelecionada != null && pecaSelecionada.isVermelho()) {
 					pecaSelecionada = null;
 				}
 			}
